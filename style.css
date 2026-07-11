@@ -1,783 +1,699 @@
 /*!
- * 《城隍夜巡》VN 引擎樣式（style.css）
- * ------------------------------------------------------------
- * 依據：novel3/bible/07-art-bible.md §2（色調）、§6（VN UI 視覺風格）
- * 全域鐵則：世界是冷的（夜靛／墨黑），唯一暖源＝香火／燈籠／朱印。
- * 字體：系統 CJK stack（思源黑體類）為主；名冊／籤／標題用楷書感道具字，
- *       不內嵌外部字型檔（自包含、無網路依賴）。
- * 深色、RWD；本作視覺方向本就固定於「夜」，不做淺色模式切換。
- * 克制紀律落到樣式層：無震動動畫、無粒子特效、燒毀只做緩慢去色過場。
- * ------------------------------------------------------------ */
+ * 《對時》（副題：亥時初響）VN 引擎樣式 — style.css
+ * ============================================================================
+ * 設計系統：版面共用、主題隨作品換。
+ *   - 【版面層】（.screen 定位、舞台/對話框/選項/HUD 的擺放位置、響應式斷點）
+ *     沿用 VN 通用慣例：對話框貼底、立繪貼底置中、選項置中、HUD 收於角落、
+ *     主選單列收於右上。此層跨作品一致——換一部小說，UI「位置」仍正確。
+ *   - 【主題層】（§0 設計標記 tokens：色彩、質感、字體、母題裝飾）獨立成一組
+ *     CSS 變數與少數裝飾規則。換作品只需改這一層即可換風格，版面不動。
+ *   本作主題＝鐘錶行：台灣側暖（黃銅檯燈、宣紙修錶單）× 刻城側冷（月藍、齒輪）；
+ *   主色＝黃銅金 × 墨藍夜 × 宣紙米 × 一縷琥珀暖光 × 極克制的朱線（秒針／對年倒數）。
+ *   —— 有別於前作《城隍夜巡》的廟宇朱紅／香火夜靛。
+ * 克制紀律落到樣式層：無震動、無情緒粒子、無臉部推鏡；淚點鏡頭最客觀。
+ * 響應式：桌機／平板／手機直橫向／劉海安全區皆納入（§12）。自包含、無外部字型/CDN。
+ * ============================================================================ */
 
 /* ============================================================
-   0. 色票（07-art-bible §2，唯一真值，供全篇沿用）
+   §0 主題設計標記（tokens）——換作品改此段即可換風格
 ============================================================ */
 :root {
-  --night-navy: #14202E;
-  --ink-shadow: #0B0E12;
-  --incense-amber: #E8A24B;
-  --warm-hi: #F2C27A;
-  --vermilion: #C4402E;
-  --deep-cinnabar: #9B2D22;
-  --shrine-gold: #C9A24B;
-  --paper-cream: #ECE0C8;
-  --cold-slate: #4A5A63;
-  --spirit-blue: #8FB0C4;
+  /* 底色：修錶行的夜 */
+  --ink:        #0D1114;   /* 近黑背景 */
+  --ink-2:      #121A22;   /* 次深 */
+  --panel:      #16222E;   /* 面板墨藍 */
+  --panel-2:    #1E2E3C;   /* 面板亮階 */
 
+  /* 黃銅系（主金屬）：懷錶、齒輪、框線 */
+  --brass:      #C99A4B;
+  --brass-hi:   #EBC77E;
+  --brass-deep: #8A6A2E;
+
+  /* 宣紙／文字 */
+  --cream:      #ECE2CC;
+  --cream-dim:  rgba(236,226,204,.66);
+  --cream-faint:rgba(236,226,204,.34);
+  --paper:      #ECE1C6;   /* 修錶單／信紙 */
+  --paper-ink:  #40331F;   /* 紙上墨字 */
+
+  /* 暖光（台灣側檯燈）＋冷光（刻城側月光）＝兩個世界的時間 */
+  --amber:      #E8A24B;
+  --amber-hi:   #F4CE8E;
+  --cold-teal:  #6E8B93;
+
+  /* 朱線：對年倒數／秒針，全 UI 唯一的紅，極克制 */
+  --red-thread: #B8402E;
+
+  /* 字體：系統 CJK stack（自包含，無內嵌字型檔） */
   --font-ui: "Hiragino Sans", "Noto Sans CJK TC", "Noto Sans TC", "PingFang TC",
     "Microsoft JhengHei", "Heiti TC", system-ui, sans-serif;
   --font-kai: "Kaiti TC", "BiauKai", "STKaiti", "Noto Serif CJK TC", "Songti TC",
     "PMingLiU", serif;
 
-  --dur-burn: 750ms;      /* 記持變烏過場，落在 08§6.1 建議的 600–900ms 區間 */
-  --dur-sprite: 450ms;
-  --dur-bg: 600ms;
-  --dur-ui: 200ms;
+  /* 尺度：以 vmin 為主，跨解析度等比縮放（§12 有斷點微調） */
+  --ui:   clamp(13px, 1.7vmin, 18px);   /* HUD/選單基準字級 */
+  --dlg:  clamp(16px, 2.35vmin, 23px);  /* 對白字級 */
+  --gap:  clamp(.4rem, 1.1vmin, .8rem);
+  --radius: 3px;
+  --frame: var(--brass-deep);            /* 框線金屬色 */
+
+  --dur-sprite: 420ms;
+  --dur-bg: 620ms;
+  --dur-ui: 190ms;
+
+  /* 劉海／圓角螢幕安全區（viewport-fit=cover 已在 <meta>） */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
 }
 
 /* ============================================================
-   1. 重置與基底
+   §1 重置與基底
 ============================================================ */
 * { box-sizing: border-box; }
 html, body {
   margin: 0; padding: 0; width: 100%; height: 100%;
-  background: var(--ink-shadow);
-  color: var(--paper-cream);
+  background: var(--ink);
+  color: var(--cream);
   font-family: var(--font-ui);
-  overflow: hidden; /* VN 為固定舞台，不需頁面捲動 */
+  font-size: var(--ui);
+  overflow: hidden;                 /* VN 固定舞台，頁面本身不捲動 */
+  overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
 }
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: inherit;
-}
-button:disabled { cursor: not-allowed; opacity: .5; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+button:disabled { cursor: not-allowed; opacity: .45; }
 ul, ol { margin: 0; padding: 0; }
 img { max-width: 100%; display: block; }
 
 #app {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  min-height: 480px;
-  background: var(--ink-shadow);
+  width: 100vw; height: 100vh;
+  height: 100dvh;                   /* 手機瀏覽器動態視高（避開網址列跳動） */
+  min-height: 360px;
+  background: var(--ink);
 }
 
 .hidden-layer { opacity: 0 !important; pointer-events: none; }
 .screen { position: absolute; inset: 0; }
-/* hidden 必須壓過各 #screen-* 的 display:flex（id 優先權高於 .screen[hidden]），
-   否則有 hidden 屬性也隱藏不了，全部畫面會疊在一起（標題選單蓋住遊戲）。 */
+/* hidden 必須壓過各 #screen-* 的 display（id 優先權高於 .screen[hidden]），
+   否則畫面會全部疊在一起（前作踩過的坑）。凡以屬性切 display 者一律 !important。 */
 .screen[hidden] { display: none !important; }
 
+/* 通用捲動條（子畫面／覆蓋層），克制細窄 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(201,154,75,.4); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
 /* ============================================================
-   2. 開機錯誤畫面
+   §2 開機錯誤畫面（靜態校驗失敗時列清單，不默默壞掉）
 ============================================================ */
 #screen-boot {
   display: flex; align-items: center; justify-content: center;
-  background: var(--ink-shadow);
-  padding: 2rem;
+  background: var(--ink); padding: 2rem;
 }
 .boot-panel {
-  max-width: 720px;
-  max-height: 80vh;
-  overflow-y: auto;
-  background: var(--night-navy);
-  border: 1px solid var(--vermilion);
-  border-radius: 4px;
+  max-width: 720px; max-height: 80vh; overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--red-thread);
+  border-radius: var(--radius);
   padding: 1.5rem 2rem;
 }
-.boot-panel h1 { color: var(--vermilion); font-size: 1.1rem; margin: 0 0 .5rem; }
-.boot-panel p { color: var(--paper-cream); opacity: .85; font-size: .85rem; }
+.boot-panel h1 { color: var(--red-thread); font-size: 1.1rem; margin: 0 0 .5rem; }
+.boot-panel p { color: var(--cream); opacity: .85; font-size: .85rem; }
 .boot-panel ul { list-style: none; }
 .boot-panel li {
-  font-size: .8rem; padding: .35rem 0; border-bottom: 1px dashed rgba(236,224,200,.15);
+  font-size: .8rem; padding: .35rem 0;
+  border-bottom: 1px dashed rgba(236,226,204,.15);
   font-family: monospace, var(--font-ui);
 }
 
 /* ============================================================
-   3. 標題畫面
+   §3 標題畫面
 ============================================================ */
 #screen-title {
   display: flex; align-items: center; justify-content: center;
-  background: var(--night-navy);
-  overflow: hidden;
+  background: var(--panel); overflow: hidden;
+  padding: calc(var(--safe-t) + 1rem) 1rem calc(var(--safe-b) + 1rem);
 }
 .title-bg {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
-  filter: saturate(.75) brightness(.55);
+  filter: saturate(.8) brightness(.5);
 }
 .title-veil {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(11,14,18,.35) 0%, rgba(11,14,18,.75) 70%, rgba(11,14,18,.92) 100%);
+  background:
+    radial-gradient(80% 60% at 50% 32%, rgba(232,162,75,.10), transparent 60%),
+    linear-gradient(180deg, rgba(13,17,20,.35) 0%, rgba(13,17,20,.78) 68%, rgba(13,17,20,.94) 100%);
 }
 .title-panel {
   position: relative; z-index: 1;
-  display: flex; flex-direction: column; align-items: center; gap: 2.2rem;
-  padding: 2rem;
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(1.4rem, 4vmin, 2.6rem);
+  padding: 1rem;
 }
+/* 直排標題＋一道朱線（＝對年紅線的隱喻） */
 #title-logo {
-  font-family: var(--font-kai);
-  font-weight: 400;
-  writing-mode: vertical-rl;
-  letter-spacing: .5rem;
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
-  color: var(--paper-cream);
-  text-shadow: 0 0 22px rgba(232,162,75,.35);
-  margin: 0;
-  padding: .2rem 0;
-  border-right: 2px solid var(--vermilion);
-  padding-right: 1rem;
+  font-family: var(--font-kai); font-weight: 400;
+  writing-mode: vertical-rl; letter-spacing: .5rem;
+  font-size: clamp(2.4rem, 8vmin, 4rem);
+  color: var(--cream);
+  text-shadow: 0 0 26px rgba(232,162,75,.4);
+  margin: 0; padding: .2rem 1rem .2rem 0;
+  border-right: 2px solid var(--red-thread);
 }
-.title-menu { display: flex; flex-direction: column; gap: .7rem; min-width: 11rem; }
-
+.title-menu { display: flex; flex-direction: column; gap: .7rem; min-width: min(13rem, 74vw); }
 .title-btn {
   font-family: var(--font-kai);
-  font-size: 1rem;
-  letter-spacing: .25rem;
-  padding: .6rem 1.2rem;
-  background: rgba(236,224,200,.06);
-  border: 1px solid var(--shrine-gold);
-  color: var(--paper-cream);
+  font-size: clamp(.95rem, 2vmin, 1.08rem);
+  letter-spacing: .28rem;
+  padding: .7rem 1.3rem; min-height: 44px;   /* 觸控目標 ≥44px */
+  background: rgba(236,226,204,.05);
+  border: 1px solid var(--brass);
+  color: var(--cream);
   border-radius: 2px;
   transition: background var(--dur-ui) ease, box-shadow var(--dur-ui) ease, border-color var(--dur-ui) ease;
 }
-.title-btn:hover:not(:disabled) {
+.title-btn:hover:not(:disabled),
+.title-btn:focus-visible {
   background: rgba(232,162,75,.14);
-  box-shadow: 0 0 12px rgba(232,162,75,.25);
-  border-color: var(--incense-amber);
+  box-shadow: 0 0 14px rgba(232,162,75,.28);
+  border-color: var(--amber); outline: none;
 }
-.title-btn-true {
-  border-color: var(--vermilion);
-  color: var(--warm-hi);
-}
+/* 真線入口（若出現）＝朱線強調 */
+.title-btn-true { border-color: var(--red-thread); color: var(--amber-hi); }
 
 /* ============================================================
-   4. 遊戲主畫面 / 舞台
+   §4 遊戲主畫面 / 舞台
 ============================================================ */
-#screen-game { background: var(--ink-shadow); }
-#stage {
-  position: relative;
-  width: 100%; height: 100%;
-  overflow: hidden;
-}
+#screen-game { background: var(--ink); }
+#stage { position: relative; width: 100%; height: 100%; overflow: hidden; }
 
-/* -- 背景層 -- */
+/* -- 背景層（雙層交叉淡入；缺圖退純色，08§7.3 容錯） -- */
 .bg-layer {
   position: absolute; inset: 0;
-  background-size: cover;
-  background-position: center;
-  background-color: var(--night-navy); /* 缺圖容錯：載入失敗時退回純色底（08§7.3） */
-  opacity: 0;
-  transition: opacity var(--dur-bg) ease;
+  background-size: cover; background-position: center;
+  background-color: var(--panel);
+  opacity: 0; transition: opacity var(--dur-bg) ease;
 }
 .bg-layer.bg-visible { opacity: 1; }
+/* 舞台暗角＋底部壓暗，讓貼底立繪與對話框讀得清楚 */
+#stage::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 4;
+  background:
+    radial-gradient(120% 90% at 50% 38%, transparent 55%, rgba(13,17,20,.34) 100%),
+    linear-gradient(180deg, transparent 52%, rgba(13,17,20,.5) 100%);
+}
 
-/* -- 立繪層 -- */
+/* -- 立繪層（放大：貼底站立、盡量佔滿舞台高度） -- */
 #sprite-layer {
   position: absolute; inset: 0;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  align-items: flex-end;
-  pointer-events: none;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: 100%;            /* 明訂列高＝舞台高，讓 slot 的 100% 不被內容撐大 */
+  align-items: end;
+  pointer-events: none; z-index: 3;
 }
 .sprite-slot {
-  position: relative;
-  height: 92%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  position: relative; height: 100%; min-height: 0;
+  display: flex; align-items: flex-end; justify-content: center;
 }
-.sprite-slot[data-pos="far-left"] { grid-column: 1; }
-.sprite-slot[data-pos="left"] { grid-column: 2; }
-.sprite-slot[data-pos="center"] { grid-column: 3; }
-.sprite-slot[data-pos="right"] { grid-column: 4; }
+.sprite-slot[data-pos="far-left"]  { grid-column: 1; }
+.sprite-slot[data-pos="left"]      { grid-column: 2; }
+.sprite-slot[data-pos="center"]    { grid-column: 3; }
+.sprite-slot[data-pos="right"]     { grid-column: 4; }
 .sprite-slot[data-pos="far-right"] { grid-column: 5; }
-
+/* 立繪本體：高度優先吃滿舞台（貼底），寬度自動；vw 上限防直式螢幕過寬。
+   下緣沒入對話框＝VN 慣例（角色「站」在場景裡）。 */
 .sprite-img {
-  max-height: 100%;
-  filter: drop-shadow(0 12px 18px rgba(0,0,0,.45));
+  max-height: 100%; height: auto; width: auto;   /* 高度吃滿舞台上限、貼底；寬度自動保比例 */
+  max-width: 50vw;                                /* 直式螢幕防過寬（手機另有覆蓋，§12） */
+  object-fit: contain; object-position: bottom center;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,.5));
   opacity: 1;
-  transition: opacity var(--dur-sprite) ease, filter var(--dur-ui) ease;
+  transition: opacity var(--dur-sprite) ease, filter var(--dur-ui) ease, transform var(--dur-sprite) ease;
 }
-.sprite-img.sprite-entering { opacity: 0; }
-.sprite-img.sprite-leaving { opacity: 0; position: absolute; bottom: 0; }
+.sprite-img.sprite-entering { opacity: 0; transform: translateY(1.5%); }
+.sprite-img.sprite-leaving  { opacity: 0; position: absolute; bottom: 0; }
+/* 非說話者壓暗（克制，不做誇張縮放） */
 .sprite-slot.dim .sprite-img {
-  opacity: .55;
-  filter: drop-shadow(0 12px 18px rgba(0,0,0,.45)) grayscale(.35) brightness(.75);
+  opacity: .62;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,.5)) brightness(.7) saturate(.85);
 }
 
 /* -- CG 層 -- */
 #cg-layer {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 5;
   display: flex; align-items: center; justify-content: center;
-  background: var(--ink-shadow);
-  opacity: 0;
-  pointer-events: none;
+  background: var(--ink);
+  opacity: 0; pointer-events: none;
   transition: opacity 700ms ease;
-  z-index: 5;
 }
 #cg-layer.visible { opacity: 1; }
 #cg-image { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 /* -- 字跡老化信覆蓋層（08§9；age 0–3 排版檔位、末封半行留白，禁模糊濾鏡） -- */
 .letter-layer {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 12;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(11,14,18,.82);
-  z-index: 12;
-  cursor: pointer;
+  background: rgba(13,17,20,.84); cursor: pointer;
+  padding: calc(var(--safe-t) + 1rem) 1rem calc(var(--safe-b) + 1rem);
 }
 .letter-layer[hidden] { display: none !important; }
 .letter-paper {
-  width: min(560px, 84vw);
-  max-height: 82vh;
-  overflow-y: auto;
-  padding: 2.4rem 2.6rem;
-  background: var(--paper-cream);
-  color: #4A3626;
-  border: 1px solid rgba(155,45,34,.35);
-  box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  width: min(560px, 88vw); max-height: 84vh; overflow-y: auto;
+  padding: clamp(1.6rem, 5vmin, 2.6rem);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 30px, rgba(64,51,31,.05) 30px 31px),
+    var(--paper);
+  color: var(--paper-ink);
+  border: 1px solid rgba(138,106,46,.5);
+  box-shadow: 0 10px 34px rgba(0,0,0,.55);
   font-family: var(--font-kai);
 }
-.letter-line { line-height: 2; font-size: clamp(1rem, 2.2vw, 1.2rem); }
-/* age 檔位＝排版參數（08§9.1，禁 morph 動畫、禁 blur） */
-.letter-age-0 .letter-line { letter-spacing: 0;      color: #4A3626; }
-.letter-age-1 .letter-line { letter-spacing: .05em;  color: #57432f; }
-.letter-age-2 .letter-line { letter-spacing: .12em;  color: #6a5540; font-size: clamp(.95rem, 2vw, 1.12rem); }
-.letter-age-3 .letter-line { letter-spacing: .16em;  color: #7c6a54; }
-/* 末封半行：渲染半句後截止——無刪節號、無淡出、無輸入框 */
-.letter-line.letter-half::after { content: ''; }
+.letter-line { line-height: 2; font-size: clamp(1rem, 2.4vmin, 1.2rem); }
+.letter-age-0 .letter-line { letter-spacing: 0;     color: #40331F; }
+.letter-age-1 .letter-line { letter-spacing: .05em; color: #52432c; }
+.letter-age-2 .letter-line { letter-spacing: .12em; color: #665338; font-size: clamp(.95rem, 2.2vmin, 1.12rem); }
+.letter-age-3 .letter-line { letter-spacing: .16em; color: #79674f; }
+.letter-line.letter-half::after { content: ''; }   /* 末封半行：渲染半句即止，無刪節號、無淡出 */
 
 /* ============================================================
-   對時盤 HUD（取代記持欄；08§4）：黃銅懷錶主錶＋heroine 小錶面＋發條窗
+   §5 對時盤 HUD（好感度系統的視覺本體；08§4）
+   黃銅懷錶主錶＋heroine 小錶面（時差＝段位、錶蓋＝坦時）＋發條窗 7→0
 ============================================================ */
 #duishi-pan {
   position: absolute;
-  top: .9rem; left: .8rem;
-  display: flex; flex-direction: column; gap: .5rem;
-  z-index: 8;
-  pointer-events: none;              /* 只讓可互動子件收點擊 */
+  top: calc(var(--safe-t) + .9rem); left: calc(var(--safe-l) + .8rem);
+  display: flex; flex-direction: column; gap: .55rem;
+  z-index: 8; pointer-events: none;         /* 只讓可互動子件收點擊 */
 }
 #watch-main {
   position: relative;
-  width: 3.4rem; height: 3.4rem;
-  padding: 0;
-  border-radius: 50%;
+  width: clamp(2.8rem, 7vmin, 3.6rem); aspect-ratio: 1;
+  padding: 0; border-radius: 50%;
   background: radial-gradient(circle at 38% 32%, #d7b26a, #9c7736 70%, #7c5c28);
-  border: 2px solid var(--shrine-gold);
-  box-shadow: 0 2px 8px rgba(0,0,0,.45), inset 0 0 6px rgba(0,0,0,.35);
+  border: 2px solid var(--brass);
+  box-shadow: 0 2px 9px rgba(0,0,0,.5), inset 0 0 6px rgba(0,0,0,.35);
   pointer-events: auto;
   transition: box-shadow var(--dur-ui) ease;
 }
-#watch-main:hover { box-shadow: 0 0 12px rgba(232,162,75,.5), inset 0 0 6px rgba(0,0,0,.35); }
-/* 修錶單入單：極短紙頁震顫一次（無音效、無加分字樣） */
-#watch-main.ticket-flash { animation: ticket-shiver 320ms ease; }
-@keyframes ticket-shiver {
-  0%,100% { transform: translateY(0); }
-  30% { transform: translateY(-1.5px); }
-  60% { transform: translateY(1px); }
-}
+#watch-main:hover, #watch-main:focus-visible { box-shadow: 0 0 14px rgba(232,162,75,.55), inset 0 0 6px rgba(0,0,0,.35); outline: none; }
+#watch-main.ticket-flash { animation: ticket-shiver 320ms ease; }   /* 入單：紙頁震顫一次，無音效無加分字 */
+@keyframes ticket-shiver { 0%,100% { transform: translateY(0);} 30% { transform: translateY(-1.5px);} 60% { transform: translateY(1px);} }
 .wface {
-  position: absolute; inset: 5px;
-  border-radius: 50%;
+  position: absolute; inset: 5px; border-radius: 50%;
   background: radial-gradient(circle at 50% 42%, #f3e6c8, #d8c49b 78%);
   box-shadow: inset 0 0 4px rgba(0,0,0,.3);
 }
-.whand-min, .whand-sec {
-  position: absolute; left: 50%; bottom: 50%;
-  transform-origin: bottom center;
-  background: #2a2118;
-}
+.whand-min, .whand-sec { position: absolute; left: 50%; bottom: 50%; transform-origin: bottom center; background: #2a2118; }
 .whand-min { width: 2px; height: 32%; transform: translateX(-50%) rotate(300deg); border-radius: 1px; }
-.whand-sec { width: 1px; height: 40%; transform: translateX(-50%); background: var(--vermilion); animation: sec-spin 60s linear infinite; }
-.whand-sec.fast { animation-duration: 15s; }   /* 限時：秒針約 4 倍速（唯一限時視覺，08§7.2） */
-@keyframes sec-spin { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
-.wpivot { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: var(--shrine-gold); }
+.whand-sec { width: 1px; height: 40%; transform: translateX(-50%); background: var(--red-thread); animation: sec-spin 60s linear infinite; }
+.whand-sec.fast { animation-duration: 15s; }        /* 限時：秒針約 4 倍速（唯一限時視覺，08§7.2） */
+@keyframes sec-spin { from { transform: translateX(-50%) rotate(0deg);} to { transform: translateX(-50%) rotate(360deg);} }
+.wpivot { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: var(--brass); }
 
-/* 發條窗 7→0（全 UI 唯一倒數；已耗格轉錶鋼銀死色，靜靜去色無閃光） */
-#spring-winder {
-  position: absolute; left: 50%; bottom: -.55rem;
-  transform: translateX(-50%);
-  display: flex; gap: 2px;
-}
-.spring-pip {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: var(--incense-amber);
-  transition: background 800ms ease, opacity 800ms ease;
-}
+/* 發條窗 7→0（全 UI 唯一倒數；耗格靜靜轉錶鋼死色，無閃光） */
+#spring-winder { position: absolute; left: 50%; bottom: -.55rem; transform: translateX(-50%); display: flex; gap: 2px; }
+.spring-pip { width: 4px; height: 4px; border-radius: 50%; background: var(--amber); transition: background 800ms ease, opacity 800ms ease; }
 .spring-pip.dead { background: #C7CDD4; opacity: .5; }
 
-/* heroine 小錶面：分針時差＝段位；錶蓋三態＝坦時 */
-#heroine-faces { display: flex; flex-direction: column; gap: .4rem; }
-.hface {
-  position: relative;
-  width: 2.2rem; height: 2.2rem;
-  display: none;
-}
+/* heroine 小錶面：分針時差＝段位；錶蓋三態＝坦時；雁回錶盤鏡像 */
+#heroine-faces { display: flex; flex-direction: column; gap: .42rem; }
+.hface { position: relative; width: clamp(1.8rem, 4.6vmin, 2.3rem); aspect-ratio: 1; display: none; }
 .hface.shown { display: block; }
 .hdial {
-  position: absolute; inset: 0;
-  border-radius: 50%;
+  position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
   background: radial-gradient(circle at 50% 42%, #efe3c8, #c9bda0 80%);
-  border: 1.5px solid var(--shrine-gold);
-  box-shadow: 0 1px 4px rgba(0,0,0,.4);
-  overflow: hidden;
+  border: 1.5px solid var(--brass);
+  box-shadow: 0 1px 5px rgba(0,0,0,.45);
 }
-.hdial.mirror { transform: scaleX(-1); }   /* 雁回錶盤水平翻轉（08§4.3） */
+.hdial.mirror { transform: scaleX(-1); }            /* 雁回錶盤水平翻轉（08§4.3） */
 .hhand {
   position: absolute; left: 50%; bottom: 50%;
-  width: 1.5px; height: 34%;
-  transform-origin: bottom center;
+  width: 1.5px; height: 34%; transform-origin: bottom center;
   transform: translateX(-50%) rotate(90deg);
-  background: #2a2118;
-  transition: transform 900ms ease;      /* 升/降段指針緩慢走位，無閃光 */
+  background: #2a2118; transition: transform 900ms ease;   /* 升降段緩慢走位，無閃光 */
 }
-.hpivot { position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; border-radius: 50%; background: var(--shrine-gold); }
-/* 錶蓋三態（坦時軸）：開/半掩/闔——CSS 覆蓋，無哭臉差分 */
+.hpivot { position: absolute; left: 50%; top: 50%; width: 3px; height: 3px; margin: -1.5px 0 0 -1.5px; border-radius: 50%; background: var(--brass); }
 .hcover {
-  position: absolute; inset: -1px;
-  border-radius: 50%;
+  position: absolute; inset: -1px; border-radius: 50%;
   background: linear-gradient(160deg, #b5893f, #7c5c28);
-  border: 1px solid var(--shrine-gold);
+  border: 1px solid var(--brass);
   transition: clip-path 600ms ease, opacity 600ms ease;
 }
 .hcover.cover-open   { clip-path: inset(0 0 100% 0); opacity: 0; }
-.hcover.cover-half   { clip-path: inset(0 0 50% 0); opacity: .92; }
-.hcover.cover-closed { clip-path: inset(0 0 0 0); opacity: .96; }
+.hcover.cover-half   { clip-path: inset(0 0 50% 0);  opacity: .92; }
+.hcover.cover-closed { clip-path: inset(0 0 0 0);    opacity: .96; }
 .hname {
-  position: absolute; left: 2.5rem; top: 50%; transform: translateY(-50%);
-  font-family: var(--font-kai);
-  font-size: .6rem; letter-spacing: .05rem;
-  color: rgba(236,224,200,.7);
-  white-space: nowrap;
-  pointer-events: none;
+  position: absolute; left: calc(100% + .35rem); top: 50%; transform: translateY(-50%);
+  font-family: var(--font-kai); font-size: clamp(.58rem, 1.5vmin, .68rem);
+  letter-spacing: .05rem; color: var(--cream-dim); white-space: nowrap; pointer-events: none;
 }
 
 /* 停拍凍幀（08§8.2）：舞台根凍結一切待機動態；唯 .exempt 立繪保持動態 */
 #stage.frozen .bg-layer,
 #stage.frozen .sprite-img,
 #stage.frozen #cg-layer { animation-play-state: paused; transition: none !important; }
-#stage.frozen .sprite-slot:not(.exempt) .sprite-img { animation-play-state: paused; }
+#stage.frozen .sprite-slot:not(.exempt) .sprite-img { animation-play-state: paused; filter: drop-shadow(0 10px 22px rgba(0,0,0,.5)) brightness(.82); }
 #stage.frozen .sprite-slot.exempt .sprite-img { animation-play-state: running; }
 
-/* -- 選項（求籤木籤） -- */
+/* ============================================================
+   §6 選項（母題＝修錶單／掛號簽條：宣紙簽條＋左緣黃銅釘＋打孔）
+============================================================ */
 #choices-layer {
-  position: absolute;
-  left: 50%; bottom: 16%;
-  transform: translateX(-50%);
-  display: flex; flex-direction: column; gap: .6rem;
-  align-items: stretch;
-  width: min(560px, 82vw);
-  opacity: 0;
-  pointer-events: none;
+  position: absolute; left: 50%; bottom: 17%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: .6rem; align-items: stretch;
+  width: min(620px, 84vw);
+  opacity: 0; pointer-events: none;
   transition: opacity var(--dur-ui) ease;
   z-index: 9;
 }
 #choices-layer.visible { opacity: 1; pointer-events: auto; }
 .choice-stick {
   position: relative;
-  padding: .75rem 1.2rem;
-  background: linear-gradient(180deg, var(--paper-cream), #ded1af);
-  color: var(--ink-shadow);
-  border: 1px solid var(--deep-cinnabar);
-  border-left: 5px solid var(--vermilion);
+  padding: .8rem 1.2rem .8rem 1.5rem; min-height: 44px;
+  background: linear-gradient(180deg, var(--paper), #ddd0b0);
+  color: var(--paper-ink);
+  border: 1px solid var(--brass-deep);
+  border-left: 4px solid var(--brass);
   border-radius: 2px;
   font-family: var(--font-kai);
-  font-size: .98rem;
+  font-size: clamp(.95rem, 2.1vmin, 1.06rem); line-height: 1.5;
   text-align: left;
-  box-shadow: 0 3px 8px rgba(0,0,0,.35);
+  box-shadow: 0 3px 10px rgba(0,0,0,.4);
   transition: box-shadow var(--dur-ui) ease, transform var(--dur-ui) ease, background var(--dur-ui) ease;
 }
-.choice-stick:hover:not(:disabled) {
-  background: linear-gradient(180deg, #fff7e6, var(--paper-cream));
-  box-shadow: 0 0 16px rgba(232,162,75,.55), 0 3px 8px rgba(0,0,0,.35);
-  transform: translateX(2px);
+.choice-stick::before {   /* 簽條左上一枚打孔（掛號單意象） */
+  content: ''; position: absolute; left: .5rem; top: .55rem;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--ink); box-shadow: inset 0 1px 1px rgba(0,0,0,.5);
+}
+.choice-stick:hover:not(:disabled),
+.choice-stick:focus-visible {
+  background: linear-gradient(180deg, #fff7e6, var(--paper));
+  box-shadow: 0 0 16px rgba(232,162,75,.5), 0 3px 10px rgba(0,0,0,.4);
+  transform: translateX(2px); outline: none;
 }
 .choice-stick.locked {
-  background: linear-gradient(180deg, #6b675a, #55524a);
-  color: rgba(236,224,200,.55);
-  border-color: rgba(155,45,34,.4);
+  background: linear-gradient(180deg, #5d5a50, #4b4841);
+  color: rgba(236,226,204,.5);
+  border-color: rgba(138,106,46,.4);
 }
 .choice-text { display: block; }
-.choice-hint { display: block; margin-top: .2rem; font-size: .72rem; opacity: .8; font-family: var(--font-ui); }
+.choice-hint, .choice-gloss { display: block; margin-top: .22rem; font-size: .74em; opacity: .78; font-family: var(--font-ui); }
 
-/* -- 對話框（墨靛半透＋宣紙紋＋朱金邊） -- */
+/* ============================================================
+   §7 對話框（母題＝修錶工作檯：墨藍檯面＋機刻細紋＋黃銅髮絲框）
+============================================================ */
 #textbox {
   position: absolute;
-  left: 3%; right: 3%; bottom: 3%;
+  left: calc(var(--safe-l) + 3%); right: calc(var(--safe-r) + 3%);
+  bottom: calc(var(--safe-b) + 2.5%);
   min-height: 22%;
-  padding: 1.3rem 1.6rem 1.6rem;
+  padding: clamp(1rem, 2.6vmin, 1.5rem) clamp(1.1rem, 3vmin, 1.7rem) clamp(1.2rem, 3vmin, 1.7rem);
   background:
-    radial-gradient(120% 160% at 8% 12%, rgba(232,162,75,.06), transparent 45%),
-    rgba(11,14,18,.82);
-  background-image:
-    radial-gradient(120% 160% at 8% 12%, rgba(232,162,75,.06), transparent 45%),
-    repeating-linear-gradient(115deg, rgba(236,224,200,.025) 0 2px, transparent 2px 6px),
-    rgba(11,14,18,.82);
-  border: 1px solid var(--vermilion);
-  outline: 1px solid var(--shrine-gold);
+    radial-gradient(130% 170% at 6% 10%, rgba(232,162,75,.07), transparent 46%),
+    repeating-linear-gradient(115deg, rgba(236,226,204,.022) 0 2px, transparent 2px 7px),
+    rgba(13,17,20,.83);
+  border: 1px solid var(--brass-deep);
+  outline: 1px solid rgba(201,154,75,.5);
   outline-offset: -4px;
-  border-radius: 3px;
-  z-index: 7;
-  cursor: pointer;
+  border-radius: var(--radius);
+  z-index: 7; cursor: pointer;
+  backdrop-filter: blur(1.5px);
 }
-#textbox::before { /* 左下角一點香頭餘燼（暖點），克制不搶戲 */
-  content: '';
-  position: absolute; left: 10px; bottom: 10px;
+/* 左下角一點黃銅檯燈餘光（暖點，克制不搶戲） */
+#textbox::before {
+  content: ''; position: absolute; left: 11px; bottom: 11px;
   width: 6px; height: 6px; border-radius: 50%;
-  background: radial-gradient(circle, var(--warm-hi), var(--incense-amber) 60%, transparent 75%);
-  box-shadow: 0 0 6px 2px rgba(232,162,75,.55);
+  background: radial-gradient(circle, var(--amber-hi), var(--amber) 60%, transparent 75%);
+  box-shadow: 0 0 7px 2px rgba(232,162,75,.5);
 }
+/* 名牌＝黃銅刻牌（引擎以 .hidden-layer 控隱藏） */
 #nameplate {
-  position: absolute;
-  top: -1.7rem; left: 1.4rem;
-  padding: .3rem 1rem;
-  background: linear-gradient(180deg, var(--deep-cinnabar), #7c2119);
-  border: 1px solid var(--shrine-gold);
+  position: absolute; top: -1.7rem; left: 1.4rem;
+  padding: .32rem 1.1rem;
+  background: linear-gradient(180deg, #b5893f, #7c5c28);
+  border: 1px solid var(--brass-hi);
   border-radius: 2px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  box-shadow: 0 2px 7px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,246,220,.25);
   transition: opacity var(--dur-ui) ease;
 }
-#nameplate::after { /* 角上一枚小朱印 */
-  content: '';
-  position: absolute; top: -4px; right: -4px;
-  width: 10px; height: 10px;
-  background: var(--vermilion);
-  border: 1px solid var(--shrine-gold);
-  border-radius: 1px;
-  transform: rotate(8deg);
+#nameplate::after {   /* 右上一枚小齒輪鉚釘 */
+  content: ''; position: absolute; top: -4px; right: -4px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--brass-hi), var(--brass-deep) 75%);
+  border: 1px solid var(--brass-hi);
 }
-#nameplate-text {
-  font-family: var(--font-kai);
-  font-size: .95rem;
-  letter-spacing: .18rem;
-  color: var(--paper-cream);
-}
+#nameplate-text { font-family: var(--font-kai); font-size: clamp(.9rem, 2vmin, 1rem); letter-spacing: .18rem; color: #201810; }
 #dialogue-text {
   font-family: var(--font-ui);
-  font-size: clamp(1rem, 2vw, 1.18rem);
-  line-height: 1.85;
-  color: var(--paper-cream);
-  white-space: pre-wrap;
-  min-height: 3.6em;
+  font-size: var(--dlg);
+  line-height: 1.85; color: var(--cream);
+  white-space: pre-wrap; min-height: 3.6em;
 }
-/* 雙語模式：台語原文下方的華語小字 */
 #dialogue-gloss {
-  margin-top: .35em;
-  padding-top: .4em;
-  border-top: 1px dashed rgba(201,162,74,.28);
+  margin-top: .35em; padding-top: .4em;
+  border-top: 1px dashed rgba(201,154,75,.28);
   font-family: var(--font-ui);
-  font-size: clamp(.82rem, 1.5vw, .95rem);
-  line-height: 1.7;
-  color: rgba(236,224,200,.62);
+  font-size: clamp(.82rem, 1.7vmin, .95rem); line-height: 1.7; color: var(--cream-dim);
   white-space: pre-wrap;
-}
-/* 選項的華語小字 */
-.choice-gloss {
-  display: block;
-  margin-top: .2em;
-  font-size: .8em;
-  color: rgba(236,224,200,.6);
 }
 #click-hint {
   position: absolute; right: 1.4rem; bottom: 1rem;
-  color: var(--incense-amber);
-  font-size: 1rem;
-  opacity: 0;
+  color: var(--amber); font-size: 1rem; opacity: 0;
   animation: hint-pulse 1.6s ease-in-out infinite;
 }
 #click-hint.visible { opacity: 1; }
-@keyframes hint-pulse {
-  0%, 100% { transform: translateY(0); opacity: .55; }
-  50% { transform: translateY(3px); opacity: 1; }
-}
+@keyframes hint-pulse { 0%,100% { transform: translateY(0); opacity: .55; } 50% { transform: translateY(3px); opacity: 1; } }
 
-/* -- HUD -- */
+/* -- 主選單列（收右上，克制） -- */
 #topbar {
   position: absolute;
-  top: .6rem; right: .8rem;
-  display: flex; gap: .35rem;
-  z-index: 10;
+  top: calc(var(--safe-t) + .55rem); right: calc(var(--safe-r) + .8rem);
+  display: flex; gap: .35rem; flex-wrap: wrap; justify-content: flex-end;
+  max-width: 62vw; z-index: 10;
 }
 #topbar button {
-  padding: .35rem .6rem;
-  font-size: .72rem;
-  background: rgba(20,32,46,.75);
-  border: 1px solid rgba(201,162,75,.5);
-  border-radius: 2px;
-  color: var(--paper-cream);
+  padding: .4rem .62rem; min-height: 34px;
+  font-size: clamp(.68rem, 1.6vmin, .78rem);
+  background: rgba(22,34,46,.78);
+  border: 1px solid rgba(201,154,75,.5);
+  border-radius: 2px; color: var(--cream);
   transition: background var(--dur-ui) ease, border-color var(--dur-ui) ease;
 }
-#topbar button:hover { background: rgba(232,162,75,.18); border-color: var(--incense-amber); }
-#topbar button.active { border-color: var(--incense-amber); color: var(--warm-hi); background: rgba(232,162,75,.16); }
+#topbar button:hover, #topbar button:focus-visible { background: rgba(232,162,75,.18); border-color: var(--amber); outline: none; }
+#topbar button.active { border-color: var(--amber); color: var(--amber-hi); background: rgba(232,162,75,.16); }
 #topbar button.flash { background: rgba(232,162,75,.4); }
 
 /* ============================================================
-   5. 結局卡
+   §8 結局卡（只標路線名＋級別，不加感嘆句；08§14）
 ============================================================ */
-#screen-endcard {
-  display: flex; align-items: center; justify-content: center;
-  background: var(--ink-shadow);
-}
+#screen-endcard { display: flex; align-items: center; justify-content: center; background: var(--ink); padding: 1.5rem; }
 .endcard-panel {
-  text-align: center;
-  padding: 3rem 4rem;
-  border: 1px solid var(--shrine-gold);
-  background: rgba(20,32,46,.5);
+  text-align: center; padding: clamp(2rem, 6vmin, 3rem) clamp(2.5rem, 8vmin, 4rem);
+  border: 1px solid var(--brass);
+  background: rgba(22,34,46,.5);
+  border-radius: var(--radius);
 }
-.endcard-route {
-  font-family: var(--font-kai);
-  font-size: 1.6rem;
-  letter-spacing: .3rem;
-  color: var(--paper-cream);
-  margin: 0 0 .4rem;
-}
-.endcard-tier {
-  font-family: var(--font-kai);
-  font-size: 2.4rem;
-  letter-spacing: .4rem;
-  color: var(--incense-amber);
-  margin: 0 0 2rem;
-}
+.endcard-route { font-family: var(--font-kai); font-size: clamp(1.2rem, 4vmin, 1.6rem); letter-spacing: .3rem; color: var(--cream); margin: 0 0 .4rem; }
+.endcard-tier  { font-family: var(--font-kai); font-size: clamp(1.8rem, 6vmin, 2.4rem); letter-spacing: .4rem; color: var(--amber); margin: 0 0 2rem; }
 
 /* ============================================================
-   6. 子畫面共用（存讀／回廊／設定／關於）
+   §9 子畫面共用（存讀／回廊／設定／關於）——母題＝工單／相框
 ============================================================ */
 #screen-saveload, #screen-gallery, #screen-settings, #screen-about {
   display: flex; align-items: flex-start; justify-content: center;
-  background: var(--ink-shadow);
-  overflow-y: auto;
-  padding: 3rem 1.5rem;
+  background: var(--ink); overflow-y: auto;
+  padding: calc(var(--safe-t) + 2.4rem) clamp(1rem, 4vw, 1.5rem) calc(var(--safe-b) + 2rem);
 }
 .subscreen-panel {
   width: min(880px, 100%);
-  background: rgba(20,32,46,.55);
-  border: 1px solid rgba(201,162,75,.4);
-  border-radius: 4px;
-  padding: 1.8rem 2rem 2.2rem;
+  background: rgba(22,34,46,.55);
+  border: 1px solid rgba(201,154,75,.4);
+  border-radius: var(--radius);
+  padding: clamp(1.2rem, 3vmin, 1.8rem) clamp(1rem, 3vmin, 2rem) clamp(1.6rem, 4vmin, 2.2rem);
 }
 .subscreen-panel h2 {
-  font-family: var(--font-kai);
-  letter-spacing: .3rem;
-  color: var(--paper-cream);
-  border-bottom: 1px solid var(--vermilion);
-  padding-bottom: .5rem;
-  margin: 0 0 1.2rem;
+  font-family: var(--font-kai); letter-spacing: .3rem; color: var(--cream);
+  border-bottom: 1px solid var(--brass); padding-bottom: .5rem; margin: 0 0 1.2rem;
 }
-.subscreen-panel h3 {
-  font-family: var(--font-kai);
-  color: var(--warm-hi);
-  font-size: .95rem;
-  margin: 1.4rem 0 .6rem;
-}
+.subscreen-panel h3 { font-family: var(--font-kai); color: var(--amber-hi); font-size: .95rem; margin: 1.4rem 0 .6rem; }
 .subscreen-panel > .title-btn { margin-top: 1.6rem; }
 
-/* -- 存讀檔：手抄名冊翻頁 -- */
-.save-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: .7rem;
-}
+/* -- 存讀檔：修錶工單卡 -- */
+.save-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .7rem; }
 .save-cell {
-  position: relative;
-  min-height: 92px;
-  padding: .6rem .7rem;
+  position: relative; min-height: 92px; padding: .6rem .7rem;
   background:
-    repeating-linear-gradient(180deg, transparent 0 22px, rgba(11,14,18,.12) 22px 23px),
-    var(--paper-cream);
-  color: var(--ink-shadow);
-  border: 1px solid var(--deep-cinnabar);
-  border-radius: 2px;
-  font-size: .78rem;
-  line-height: 1.5;
-  cursor: pointer;
+    repeating-linear-gradient(180deg, transparent 0 22px, rgba(13,17,20,.1) 22px 23px),
+    var(--paper);
+  color: var(--ink); border: 1px solid var(--brass-deep); border-radius: 2px;
+  font-size: .78rem; line-height: 1.5; cursor: pointer;
   transition: box-shadow var(--dur-ui) ease, transform var(--dur-ui) ease;
 }
 .save-cell:hover { box-shadow: 0 0 14px rgba(232,162,75,.4); transform: translateY(-1px); }
-.save-cell.empty { color: rgba(11,14,18,.4); background: rgba(236,224,200,.35); cursor: default; }
+.save-cell.empty { color: rgba(13,17,20,.4); background: rgba(236,226,204,.32); cursor: default; }
 .save-cell.empty:hover { box-shadow: none; transform: none; }
 .save-cell.save-auto { border-style: dashed; }
 .save-info b { font-family: var(--font-kai); }
 .save-ts, .save-route { opacity: .7; }
-.save-delete {
-  position: absolute; top: .3rem; right: .3rem;
-  width: 1.4rem; height: 1.4rem;
-  font-size: .68rem;
-  background: var(--ink-shadow);
-  color: var(--paper-cream);
-  border-radius: 1px;
-}
-.save-delete:hover { background: var(--vermilion); }
+.save-delete { position: absolute; top: .3rem; right: .3rem; width: 1.6rem; height: 1.6rem; font-size: .68rem; background: var(--ink); color: var(--cream); border-radius: 1px; }
+.save-delete:hover { background: var(--red-thread); }
 
 /* -- 回廊 -- */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: .6rem;
-}
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .6rem; }
 .gallery-cell {
-  aspect-ratio: 16 / 9;
-  background: var(--night-navy);
-  border: 1px solid rgba(201,162,75,.35);
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-  color: rgba(236,224,200,.35);
-  font-family: var(--font-kai);
+  aspect-ratio: 16 / 9; background: var(--panel);
+  border: 1px solid rgba(201,154,75,.35);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+  color: var(--cream-faint); font-family: var(--font-kai);
 }
 .gallery-cell img { width: 100%; height: 100%; object-fit: cover; }
-.gallery-cell.locked { filter: none; }
 .ending-list { display: flex; flex-direction: column; gap: .35rem; }
 .ending-row {
-  padding: .4rem .7rem;
-  background: rgba(236,224,200,.06);
-  border: 1px solid rgba(201,162,75,.3);
-  font-family: var(--font-kai);
-  font-size: .85rem;
+  padding: .45rem .7rem; background: rgba(236,226,204,.06);
+  border: 1px solid rgba(201,154,75,.3);
+  font-family: var(--font-kai); font-size: .85rem;
 }
-.ending-row.locked { color: rgba(236,224,200,.35); }
+.ending-row.locked { color: var(--cream-faint); }
 
 /* -- 設定 -- */
 .setting-row {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 1rem;
-  padding: .55rem 0;
-  border-bottom: 1px solid rgba(236,224,200,.08);
-  font-size: .88rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .6rem 0; border-bottom: 1px solid rgba(236,226,204,.08); font-size: .9rem; min-height: 40px;
 }
 .setting-row-check { justify-content: flex-start; }
-.setting-row input[type="range"] { width: 55%; accent-color: var(--incense-amber); }
-.setting-row input[type="checkbox"] { margin-right: .6rem; accent-color: var(--incense-amber); }
+.setting-row input[type="range"] { width: 55%; accent-color: var(--amber); }
+.setting-row input[type="checkbox"] { margin-right: .6rem; width: 18px; height: 18px; accent-color: var(--amber); }
 
 /* -- 關於 -- */
-#about-text p { font-size: .85rem; line-height: 1.7; opacity: .9; }
+#about-text p { font-size: .88rem; line-height: 1.75; opacity: .9; }
 
 /* ============================================================
-   7. 回顧 log 覆蓋層
+   §10 覆蓋層共用（回顧 log／懷錶台灣頁／修錶單）
 ============================================================ */
 .overlay {
-  position: absolute; inset: 0;
-  z-index: 40;
-  background: rgba(11,14,18,.82);
+  position: absolute; inset: 0; z-index: 40;
+  background: rgba(13,17,20,.84);
   display: flex; align-items: center; justify-content: center;
+  padding: calc(var(--safe-t) + 1rem) 1rem calc(var(--safe-b) + 1rem);
 }
 .overlay[hidden] { display: none !important; }
 #log-panel {
-  width: min(680px, 92vw);
-  max-height: 82vh;
+  width: min(680px, 94vw); max-height: 82vh;
   display: flex; flex-direction: column;
-  background: var(--night-navy);
-  border: 1px solid var(--shrine-gold);
-  padding: 1.4rem 1.6rem;
-  border-radius: 4px;
+  background: var(--panel); border: 1px solid var(--brass);
+  padding: 1.4rem 1.6rem; border-radius: var(--radius);
 }
-#log-panel h2 {
-  font-family: var(--font-kai);
-  margin: 0 0 .8rem;
-  letter-spacing: .3rem;
-}
-#log-list {
-  overflow-y: auto;
-  flex: 1;
-  display: flex; flex-direction: column; gap: .7rem;
-  padding-right: .4rem;
-}
-.log-row b {
-  display: block;
-  font-family: var(--font-kai);
-  color: var(--warm-hi);
-  font-size: .82rem;
-  margin-bottom: .15rem;
-}
-.log-row div:not(.log-row b) { font-size: .88rem; line-height: 1.6; opacity: .92; }
+#log-panel h2 { font-family: var(--font-kai); margin: 0 0 .8rem; letter-spacing: .3rem; }
+#log-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: .7rem; padding-right: .4rem; }
+.log-row b { display: block; font-family: var(--font-kai); color: var(--amber-hi); font-size: .82rem; margin-bottom: .15rem; }
+.log-row div:not(.log-row b) { font-size: .9rem; line-height: 1.6; opacity: .92; }
 #log-panel .title-btn { margin-top: 1rem; align-self: flex-end; }
 
-/* ============================================================
-   8. RWD
-============================================================ */
-@media (max-width: 720px) {
-  #title-logo { writing-mode: horizontal-tb; letter-spacing: .3rem; border-right: none; border-bottom: 2px solid var(--vermilion); padding: 0 0 .5rem; }
-  .title-menu { min-width: 80vw; }
-  #topbar { flex-wrap: wrap; justify-content: flex-end; width: 60vw; }
-  #duishi-pan { top: .5rem; left: .4rem; }
-  #watch-main { width: 2.8rem; height: 2.8rem; }
-  .hface { width: 1.8rem; height: 1.8rem; }
-  .hname { display: none; }
-  #textbox { left: 2%; right: 2%; bottom: 1.5%; min-height: 30%; padding: 1rem 1.1rem 1.3rem; }
-  #choices-layer { width: 92vw; bottom: 12%; }
-  .subscreen-panel { padding: 1.2rem 1rem 1.6rem; }
-}
-
-@media (max-height: 480px) {
-  #textbox { min-height: 34%; }
-}
-
-/* ============================================================
-   9. 懷錶台灣頁 / 修錶單 覆蓋層（08§4.6／§5）
-============================================================ */
+/* -- 懷錶台灣頁／修錶單（宣紙工單） -- */
 #flip-panel, #ledger-panel {
-  width: min(420px, 90vw);
-  max-height: 82vh;
+  width: min(440px, 92vw); max-height: 84vh;
   display: flex; flex-direction: column;
   background:
-    repeating-linear-gradient(180deg, transparent 0 26px, rgba(11,14,18,.06) 26px 27px),
-    var(--paper-cream);
-  color: var(--ink-shadow);
-  border: 1px solid var(--deep-cinnabar);
-  border-radius: 3px;
-  padding: 1.4rem 1.6rem;
-  box-shadow: 0 10px 34px rgba(0,0,0,.5);
+    repeating-linear-gradient(180deg, transparent 0 26px, rgba(13,17,20,.05) 26px 27px),
+    var(--paper);
+  color: var(--ink); border: 1px solid var(--brass-deep); border-radius: var(--radius);
+  padding: 1.4rem 1.6rem; box-shadow: 0 12px 36px rgba(0,0,0,.55);
 }
 #flip-panel h2, #ledger-panel h2 {
-  font-family: var(--font-kai);
-  letter-spacing: .25rem;
-  color: var(--deep-cinnabar);
-  border-bottom: 1px solid var(--vermilion);
-  padding-bottom: .45rem;
-  margin: 0 0 1rem;
-  font-size: 1.05rem;
+  font-family: var(--font-kai); letter-spacing: .25rem; color: var(--brass-deep);
+  border-bottom: 1px solid var(--brass); padding-bottom: .45rem; margin: 0 0 1rem; font-size: 1.05rem;
 }
 .flip-row {
   display: flex; justify-content: space-between; align-items: baseline;
-  padding: .5rem 0;
-  border-bottom: 1px dashed rgba(11,14,18,.18);
-  font-family: var(--font-kai);
-  font-size: .92rem;
+  padding: .55rem 0; border-bottom: 1px dashed rgba(13,17,20,.18);
+  font-family: var(--font-kai); font-size: .94rem;
 }
-.flip-key { color: rgba(11,14,18,.55); letter-spacing: .12rem; }
+.flip-key { color: rgba(13,17,20,.55); letter-spacing: .12rem; }
 #flip-panel .title-btn, #ledger-panel .title-btn {
-  margin-top: .9rem;
-  color: var(--paper-cream);
-  border-color: var(--deep-cinnabar);
-  background: rgba(155,45,34,.12);
+  margin-top: .9rem; color: var(--paper-ink);
+  border-color: var(--brass-deep); background: rgba(138,106,46,.12);
 }
-#ledger-list {
-  overflow-y: auto;
-  display: flex; flex-direction: column; gap: .35rem;
-  max-height: 46vh;
-}
+#flip-panel .title-btn:hover, #ledger-panel .title-btn:hover { background: rgba(232,162,75,.22); }
+#ledger-list { overflow-y: auto; display: flex; flex-direction: column; gap: .35rem; max-height: 46vh; }
 .ledger-row {
-  padding: .45rem .7rem;
-  background: rgba(11,14,18,.05);
-  border-left: 4px solid var(--vermilion);
-  font-family: var(--font-kai);
-  font-size: .88rem;
-  cursor: pointer;
-  transition: background var(--dur-ui) ease;
+  padding: .5rem .7rem; background: rgba(13,17,20,.05);
+  border-left: 4px solid var(--brass); font-family: var(--font-kai);
+  font-size: .9rem; cursor: pointer; transition: background var(--dur-ui) ease;
 }
 .ledger-row:hover { background: rgba(232,162,75,.18); }
-.ledger-empty { color: rgba(11,14,18,.45); font-size: .82rem; padding: .5rem .2rem; }
+.ledger-empty { color: rgba(13,17,20,.45); font-size: .82rem; padding: .5rem .2rem; }
 #ledger-replay {
-  margin-top: .8rem;
-  padding: .7rem .8rem;
-  background: rgba(20,32,46,.06);
-  border: 1px solid rgba(155,45,34,.3);
-  font-family: var(--font-kai);
-  font-size: .86rem;
-  line-height: 1.7;
-  color: #3a2f22;
+  margin-top: .8rem; padding: .7rem .8rem;
+  background: rgba(22,34,46,.06); border: 1px solid rgba(138,106,46,.3);
+  font-family: var(--font-kai); font-size: .88rem; line-height: 1.7; color: var(--paper-ink);
 }
 #ledger-replay[hidden] { display: none !important; }
+
+/* ============================================================
+   §11 動態減量（無障礙：使用者要求減少動態時，關掉待機動畫）
+============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .whand-sec { animation: none; }
+  #click-hint { animation: none; opacity: .8; }
+  * { transition-duration: .01ms !important; }
+}
+
+/* ============================================================
+   §12 響應式（手機直橫向／平板／大螢幕／劉海安全區）
+   —— 版面位置不變，只調尺寸密度；此段跨作品可沿用
+============================================================ */
+
+/* 直式手機（窄）：對話框加高、立繪略縮、HUD 與選單收緊、選項幾乎滿寬 */
+@media (max-width: 640px) {
+  #title-logo { writing-mode: horizontal-tb; letter-spacing: .3rem; border-right: none; border-bottom: 2px solid var(--red-thread); padding: 0 0 .5rem; }
+  .title-menu { min-width: 82vw; }
+  .sprite-img { max-width: 78vw; }
+  #textbox { left: 2%; right: 2%; bottom: calc(var(--safe-b) + 1.5%); min-height: 28%; }
+  #choices-layer { width: 92vw; bottom: 13%; }
+  #topbar { max-width: 72vw; gap: .28rem; }
+  #topbar button { padding: .38rem .5rem; }
+  .hname { display: none; }                 /* 小螢幕收掉 heroine 名字，錶面自身表意 */
+  .save-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
+}
+
+/* 極窄（小手機直式） */
+@media (max-width: 400px) {
+  #textbox { min-height: 32%; }
+  .sprite-img { max-width: 86vw; }
+}
+
+/* 橫式且矮（手機橫放）：對話框壓扁、立繪吃滿高度、HUD 縮小 */
+@media (max-height: 500px) and (orientation: landscape) {
+  #textbox { min-height: 30%; padding: .7rem 1rem .8rem; bottom: calc(var(--safe-b) + 1.5%); }
+  #dialogue-text { min-height: 2.4em; line-height: 1.6; }
+  #choices-layer { bottom: 20%; gap: .4rem; }
+  .choice-stick { padding: .5rem 1rem; }
+  #duishi-pan { gap: .35rem; }
+  #topbar button { min-height: 30px; }
+}
+
+/* 直式矮（少見）：確保對話框不吃掉整個舞台 */
+@media (max-height: 520px) and (orientation: portrait) {
+  #textbox { min-height: 30%; }
+}
+
+/* 大螢幕：鎖住最大密度，避免行長過長／元件過巨 */
+@media (min-width: 1600px) {
+  :root { --dlg: clamp(18px, 1.5vw, 24px); }
+  #textbox { left: 8%; right: 8%; }
+  #choices-layer { width: min(680px, 60vw); }
+}
+
+/* 觸控裝置：加大可點區、去掉 hover 殘留 */
+@media (hover: none) and (pointer: fine), (pointer: coarse) {
+  .title-btn, .choice-stick { min-height: 48px; }
+  #topbar button { min-height: 38px; padding: .45rem .6rem; }
+}
