@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>對時</title>
+<!-- inline SVG favicon（黃銅懷錶）：自包含、消除 favicon.ico 的 404 -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d1114'/%3E%3Ccircle cx='16' cy='18' r='9' fill='none' stroke='%23c99a4b' stroke-width='2'/%3E%3Crect x='14.5' y='2' width='3' height='4' rx='1' fill='%23c99a4b'/%3E%3Cline x1='16' y1='18' x2='16' y2='11' stroke='%23efe3c8' stroke-width='1.5'/%3E%3Cline x1='16' y1='18' x2='21' y2='18' stroke='%23efe3c8' stroke-width='1.5'/%3E%3C/svg%3E">
+<!-- 全部樣式集中於 style.css；不依賴任何外部 CDN／字型／API（08-engine-spec §0 自包含） -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============================================================
+       開機錯誤畫面：story.json 靜態校驗失敗時顯示清單，不默默壞掉（08§13）
+  ============================================================ -->
+  <div id="screen-boot" class="screen" hidden>
+    <div class="boot-panel">
+      <h1>劇本資料校驗未通過</h1>
+      <p>以下錯誤需修正 <code>story.json</code> 後重新產生 <code>story.js</code>：</p>
+      <ul id="boot-errors"></ul>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       標題畫面（08§11.3：不設真線入口——真線入口在定日場戲內）
+  ============================================================ -->
+  <div id="screen-title" class="screen" hidden>
+    <div id="title-bg" class="title-bg"></div>
+    <div class="title-veil"></div>
+    <div class="title-panel">
+      <h1 id="title-logo">對時</h1>
+      <nav class="title-menu">
+        <button id="btn-new-game" type="button" class="title-btn">開始新局</button>
+        <button id="btn-continue" type="button" class="title-btn">繼續</button>
+        <button id="btn-load" type="button" class="title-btn">讀取</button>
+        <button id="btn-gallery" type="button" class="title-btn">回廊</button>
+        <button id="btn-settings" type="button" class="title-btn">設定</button>
+        <button id="btn-about" type="button" class="title-btn">關於</button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       遊戲主畫面：舞台 + 對話框 + 對時盤 HUD
+  ============================================================ -->
+  <div id="screen-game" class="screen" hidden>
+    <div id="stage">
+
+      <!-- 背景層（雙層供 fade 交叉淡入；cut 時只用其中一層） -->
+      <div id="bg-a" class="bg-layer bg-visible"></div>
+      <div id="bg-b" class="bg-layer"></div>
+
+      <!-- 立繪層 -->
+      <div id="sprite-layer">
+        <div class="sprite-slot" data-pos="far-left"></div>
+        <div class="sprite-slot" data-pos="left"></div>
+        <div class="sprite-slot" data-pos="center"></div>
+        <div class="sprite-slot" data-pos="right"></div>
+        <div class="sprite-slot" data-pos="far-right"></div>
+      </div>
+
+      <!-- 事件 CG 層 -->
+      <div id="cg-layer"><img id="cg-image" alt=""></div>
+
+      <!-- 字跡老化信覆蓋層（08§9；age 0–3、末封半行留白） -->
+      <div id="letter-layer" class="letter-layer" hidden>
+        <div id="letter-paper" class="letter-paper letter-age-0">
+          <div id="letter-lines"></div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           對時盤 HUD（取代記持欄；08§4）：主錶＋heroine 小錶面＋發條窗
+      ============================================================ -->
+      <div id="duishi-pan" aria-label="對時盤">
+        <button id="watch-main" type="button" title="懷錶（點擊翻面看台灣頁）">
+          <div class="wface">
+            <div class="whand-min"></div>
+            <div id="whand-sec" class="whand-sec"></div>
+            <div class="wpivot"></div>
+          </div>
+          <div id="spring-winder" aria-label="發條窗"></div>
+        </button>
+        <div id="heroine-faces"></div>
+      </div>
+
+      <!-- 選項 -->
+      <div id="choices-layer"></div>
+
+      <!-- 對話框（名牌是稱謂溫度計載體） -->
+      <div id="textbox">
+        <div id="nameplate" class="hidden-layer"><span id="nameplate-text"></span></div>
+        <div id="dialogue-text"></div>
+        <div id="click-hint">▼</div>
+      </div>
+
+      <!-- HUD topbar -->
+      <div id="topbar">
+        <button id="btn-log" type="button" title="回顧">回顧</button>
+        <button id="btn-auto" type="button" title="自動播放">自動</button>
+        <button id="btn-skip" type="button" title="快轉已讀">快轉</button>
+        <button id="btn-quicksave" type="button" title="快速存檔">快存</button>
+        <button id="btn-quickload" type="button" title="快速讀檔">快讀</button>
+        <button id="btn-save-menu" type="button" title="存檔">存檔</button>
+        <button id="btn-load-menu" type="button" title="讀檔">讀檔</button>
+        <button id="btn-settings-ingame" type="button" title="設定">設定</button>
+        <button id="btn-title" type="button" title="回標題">標題</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       結局卡：只標路線名＋級別，不加感嘆句（08§14）
+  ============================================================ -->
+  <div id="screen-endcard" class="screen" hidden>
+    <div class="endcard-panel">
+      <p id="endcard-route" class="endcard-route"></p>
+      <p id="endcard-tier" class="endcard-tier"></p>
+      <button id="btn-endcard-title" type="button" class="title-btn">返回標題</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       存讀檔
+  ============================================================ -->
+  <div id="screen-saveload" class="screen" hidden>
+    <div class="subscreen-panel">
+      <h2 id="saveload-heading">存檔</h2>
+      <div id="saveload-grid" class="save-grid"></div>
+      <button id="btn-saveload-back" type="button" class="title-btn">返回</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       回廊
+  ============================================================ -->
+  <div id="screen-gallery" class="screen" hidden>
+    <div class="subscreen-panel">
+      <h2>回廊</h2>
+      <section>
+        <h3>事件圖</h3>
+        <div id="gallery-cg-grid" class="gallery-grid"></div>
+      </section>
+      <section>
+        <h3>結局</h3>
+        <div id="gallery-endings-list" class="ending-list"></div>
+      </section>
+      <button id="btn-gallery-back" type="button" class="title-btn">返回</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       設定
+  ============================================================ -->
+  <div id="screen-settings" class="screen" hidden>
+    <div class="subscreen-panel">
+      <h2>設定</h2>
+      <label class="setting-row">文字速度（ms／字）
+        <input id="setting-textspeed" type="range" min="0" max="60" step="2">
+      </label>
+      <label class="setting-row setting-row-check">
+        <input id="setting-instant" type="checkbox"> 立即顯示文字（無障礙／回頭黨）
+      </label>
+      <label class="setting-row">自動播放間隔（ms）
+        <input id="setting-autospeed" type="range" min="200" max="4000" step="100">
+      </label>
+      <label class="setting-row setting-row-check">
+        <input id="setting-skip" type="checkbox"> 快轉時只跳過已讀文字
+      </label>
+      <label class="setting-row setting-row-check">
+        <input id="setting-timed" type="checkbox"> 限時選項（關閉＝不計時，須自行選擇）
+      </label>
+      <label class="setting-row">BGM 音量
+        <input id="setting-bgm-vol" type="range" min="0" max="100" step="5">
+      </label>
+      <label class="setting-row">音效音量
+        <input id="setting-se-vol" type="range" min="0" max="100" step="5">
+      </label>
+      <button id="setting-fullscreen" type="button" class="title-btn">全螢幕</button>
+      <button id="btn-settings-back" type="button" class="title-btn">返回</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       關於
+  ============================================================ -->
+  <div id="screen-about" class="screen" hidden>
+    <div class="subscreen-panel">
+      <h2>關於</h2>
+      <div id="about-text"></div>
+      <button id="btn-about-back" type="button" class="title-btn">返回</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       懷錶翻面：台灣頁（08§4.6）
+  ============================================================ -->
+  <div id="flip-overlay" class="overlay" hidden>
+    <div id="flip-panel">
+      <h2>懷錶・台灣頁</h2>
+      <div class="flip-row"><span class="flip-key">日子</span><span id="flip-date">—</span></div>
+      <div class="flip-row"><span class="flip-key">對年</span><span id="flip-left">—</span></div>
+      <div class="flip-row"><span class="flip-key">本窗</span><span id="flip-win">—</span></div>
+      <button id="btn-ledger" type="button" class="title-btn">修錶單</button>
+      <button id="btn-flip-close" type="button" class="title-btn">合上</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       修錶單（存款清單＋一行回放；08§5）
+  ============================================================ -->
+  <div id="ledger-overlay" class="overlay" hidden>
+    <div id="ledger-panel">
+      <h2>修錶單</h2>
+      <div id="ledger-list"></div>
+      <div id="ledger-replay" hidden></div>
+      <button id="btn-ledger-close" type="button" class="title-btn">收起</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       回顧 log 覆蓋層
+  ============================================================ -->
+  <div id="overlay-log" class="overlay" hidden>
+    <div id="log-panel">
+      <h2>回顧</h2>
+      <div id="log-list"></div>
+      <button id="btn-log-close" type="button" class="title-btn">關閉</button>
+    </div>
+  </div>
+
+  <!-- 共用 BGM 播放器（選用、克制，預設關仍成立） -->
+  <audio id="bgm-player" loop preload="none" hidden></audio>
+
+</div>
+
+<!-- 載入順序（重要，08§0-1）：story.js 必須在 engine.js 之前，讓 window.STORY 先就位 -->
+<script src="story.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>

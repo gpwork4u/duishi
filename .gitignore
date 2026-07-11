@@ -1,0 +1,4 @@
+.DS_Store
+assets/**/_prompts/
+assets/**/_work/
+*.raw.png
