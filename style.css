@@ -437,10 +437,10 @@ img { max-width: 100%; display: block; }
 #nameplate {
   position: absolute; top: -1.7rem; left: 1.4rem;
   padding: .32rem 1.1rem;
-  background: linear-gradient(180deg, #b5893f, #7c5c28);
+  background: linear-gradient(180deg, #241a12, #17100a);
   border: 1px solid var(--brass-hi);
   border-radius: 2px;
-  box-shadow: 0 2px 7px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,246,220,.25);
+  box-shadow: 0 2px 7px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,246,220,.18);
   transition: opacity var(--dur-ui) ease;
 }
 #nameplate::after {   /* 右上一枚小齒輪鉚釘 */
@@ -449,7 +449,7 @@ img { max-width: 100%; display: block; }
   background: radial-gradient(circle at 40% 35%, var(--brass-hi), var(--brass-deep) 75%);
   border: 1px solid var(--brass-hi);
 }
-#nameplate-text { font-family: var(--font-kai); font-size: clamp(.9rem, 2vmin, 1rem); letter-spacing: .18rem; color: #201810; }
+#nameplate-text { font-family: var(--font-kai); font-size: clamp(.95rem, 2.1vmin, 1.05rem); font-weight: 700; letter-spacing: .18rem; color: #F2E6C9; text-shadow: 0 1px 2px rgba(0,0,0,.6), 0 0 1px rgba(0,0,0,.7); }
 #dialogue-text {
   font-family: var(--font-ui);
   font-size: var(--dlg);
