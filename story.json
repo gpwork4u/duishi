@@ -240,6 +240,9 @@
           "text": "前半段她交代湯擺在電鍋。這句我聽了五年，每一則都一樣——所以我以為，還來得及聽下一則。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/kitchen-taiwan.png",
           "fx": "fade"
         },
@@ -248,6 +251,9 @@
         },
         {
           "text": "喪事辦的是阿公，湯還是阿嬤每晚照留。這屋裡的鐘，本來就各走各的。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -321,7 +327,8 @@
           }
         }
       ],
-      "next": "common-02"
+      "next": "common-02",
+      "sprites": []
     },
     "common-02": {
       "title": "一圈開一窗",
@@ -372,10 +379,10 @@
           "text": "匣裡剩七圈——換句話說，這道門我這輩子總共只能來回七次。用完，門就死。"
         },
         {
-          "text": "而且門認鑰、鑰認手，一把鑰只渡一個人。我手上沒有第二把鑰。這一窗要走三日——我只能等它走完。"
+          "text": "而且門認鑰、鑰認手，一把鑰只渡一個人。我手上沒有第二把鑰。"
         },
         {
-          "text": "反正走不了，我離開鐘樓，到城裡四處看看，順便摸清這是個什麼地方。"
+          "text": "這一窗最多三日，我大可現在就出去——但門只開這一趟，一出就回不來，而台灣那邊的一個月反正已經在走。既然來了，我索性離開鐘樓，到城裡四處看看，摸清這是什麼地方。"
         },
         {
           "bg": "backgrounds/ke-city-market.png",
@@ -470,6 +477,9 @@
           "text": "掌心裡只有那顆黃銅齒輪還是溫的。除了它，我什麼也沒帶回來——時間留在門那邊，我這邊只剩一個空掉的下午。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-backroom-night.png",
           "fx": "fade"
         },
@@ -492,6 +502,9 @@
           "text": "三十天的保存期限。過了。我再也聽不到那段話了。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/kitchen-taiwan.png",
           "fx": "fade"
         },
@@ -500,6 +513,9 @@
         },
         {
           "text": "我站著，沒有動作。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -548,6 +564,9 @@
           "text": "她沒再叫我「阿律」。從這天起，她叫我「你」。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/kitchen-taiwan.png",
           "fx": "fade"
         },
@@ -577,7 +596,8 @@
             "f1_vow": false
           }
         }
-      ]
+      ],
+      "sprites": []
     },
     "common-05": {
       "title": "這正是這裡的手藝",
@@ -679,7 +699,8 @@
           "hide": "ting"
         }
       ],
-      "next": "common-06"
+      "next": "common-06",
+      "sprites": []
     },
     "common-06": {
       "title": "按日期排的人",
@@ -874,7 +895,8 @@
           "text": "我在月曆上圈了下一次過窗的日子。這是第一次，我預先圈了。"
         }
       ],
-      "next": "common-09"
+      "next": "common-09",
+      "sprites": []
     },
     "common-09": {
       "title": "一格時辰換一句話",
@@ -1019,7 +1041,8 @@
           "text": "今天的名單，要送哪幾家？",
           "to": "common-09-tinggate"
         }
-      ]
+      ],
+      "sprites": []
     },
     "common-09-tinggate": {
       "type": "autoBranch",
@@ -1037,7 +1060,8 @@
         {
           "goto": "common-10a"
         }
-      ]
+      ],
+      "steps": []
     },
     "common-09-tingup": {
       "steps": [
@@ -1292,35 +1316,43 @@
     },
     "end-common-normal": {
       "title": "再看看",
-      "bg": "backgrounds/watch-shop-backroom-night.png",
+      "bg": "backgrounds/tower-base-door.png",
       "bgFx": "fade",
       "bgm": null,
+      "sprites": [],
       "steps": [
         {
           "text": "我沒有把哪一個日期，說給哪一個人聽。"
         },
         {
-          "text": "三扇窗都留著，也就是一扇都沒進去。門前那三個人，各自回到各自的後日。"
+          "text": "剩下的窗，我一扇一扇照開——過去、回來、再過去，卻始終沒對誰定下一個日子。門前那幾個人，各自回到各自的後日。"
         },
         {
-          "text": "後房那口老掛鐘，還停在阿公斷氣的那一刻。我照舊每天拉開鐵捲門，照舊沒去動它。"
+          "text": "發條一圈一圈走盡。最後一圈用完，門在死鐘背面靜靜熄滅，再也不亮。"
+        },
+        {
+          "bg": "backgrounds/watch-shop-backroom-night.png",
+          "fx": "fade"
+        },
+        {
+          "text": "後房。我終於動手：把停擺的老掛鐘拆開、清洗、上油，一顆齒輪一顆齒輪校準。"
         },
         {
           "say": "錶走得慢不要緊，別讓它停了。",
           "who": "agong"
         },
         {
-          "text": "我把這句記下來，卻始終沒替它上發條。日子照走，我只是看著。"
+          "text": "掛鐘重新走了。阿公要我修的那口鐘，我到底修好了——這一口。"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
         {
-          "text": "台灣，店裡。我的修錶單一疊，交期欄全空著。客人來取，我總說：再看看。"
+          "text": "台灣，店裡。修錶單的交期欄，偶爾我也填上日子了；只是最重的那個「下次」，始終沒說出口。"
         },
         {
-          "text": "對年那日到了又過了。掛鐘沒響。我對誰都沒有說出第二句。"
+          "text": "對年那日到了又過了。整點的鐘聲裡，那一響始終缺著——我修得好一口鐘，補不回那一響。我得到的，是一口普通的、會走的鐘。"
         }
       ],
       "ending": {
@@ -1328,6 +1360,20 @@
         "route": "none",
         "tier": "normal"
       }
+    },
+    "end-common-normal-refused": {
+      "bg": "backgrounds/bell-tower.png",
+      "bgFx": "fade",
+      "sprites": [],
+      "steps": [
+        {
+          "text": "我把齒輪收回掌心，放進口袋。門另一頭的那一響，我明明能補，卻選擇不補。"
+        },
+        {
+          "text": "這筆數，我認了。"
+        }
+      ],
+      "next": "end-common-normal"
     },
     "ting-01": {
       "title": "巡鐘同行",
@@ -1486,14 +1532,6 @@
           ]
         },
         {
-          "sprite": {
-            "char": "yiyuan",
-            "expr": "normal",
-            "pos": "right"
-          },
-          "fx": "fade"
-        },
-        {
           "text": "暮。一個推電鐘、主張廢掉這口大鐘的議員，當街攔下丈量的隊伍，聲量放到整條街都聽得見。他就是催著開聽證、要表決鐘去留的那個人。"
         },
         {
@@ -1524,7 +1562,8 @@
           "text": "「今天別巡了，我陪妳歇一歇。」",
           "to": "ting-01-mid"
         }
-      ]
+      ],
+      "sprites": []
     },
     "ting-01-depA1": {
       "bg": "backgrounds/ke-city-market.png",
@@ -1911,6 +1950,9 @@
           "text": "門在背後合上，沒有聲音。懷錶的秒針還在走——它是我唯一帶得過門的東西。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-backroom-night.png",
           "fx": "fade"
         },
@@ -1920,7 +1962,7 @@
           }
         },
         {
-          "text": "台灣。後房。日曆翻過六頁，什麼事也沒發生——對我是六天，對她是明天一早。"
+          "text": "台灣。後房。日曆一口氣翻掉一個月，什麼事也沒發生——這邊過了一個月，對她只是隔一夜，明天一早我就該回去。"
         }
       ],
       "next": "ting-03"
@@ -2006,7 +2048,8 @@
           "text": "「這些事妳全記得，真不容易。」",
           "to": "ting-03-free"
         }
-      ]
+      ],
+      "sprites": []
     },
     "ting-03-free": {
       "bg": "backgrounds/bell-tower.png",
@@ -2249,6 +2292,9 @@
           "winEnd": true
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/kitchen-taiwan.png",
           "fx": "fade"
         },
@@ -2259,14 +2305,6 @@
         },
         {
           "text": "台灣。這邊又走掉了一個月。廚房，電鍋是空的——我不在的日子，沒人替阿嬤把湯留起來。接著是住院，是出院，是姑姑接手了日常。"
-        },
-        {
-          "sprite": {
-            "char": "gu",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "fade"
         },
         {
           "say": "藥一天三次，你在的話，就你拿。對年怎麼辦，你自己想。",
@@ -2387,7 +2425,8 @@
           "text": "我和她並肩站在無聲的城裡。沒有話。"
         }
       ],
-      "next": "ting-05"
+      "next": "ting-05",
+      "sprites": []
     },
     "ting-05": {
       "title": "表決敗象",
@@ -2462,6 +2501,9 @@
           "text": "刻城。三張空鏡：他的工作凳空著；她獨自走那圈無用的路，背影；擦得發亮的空槌座。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
@@ -2474,6 +2516,9 @@
         },
         {
           "text": "我停了一拍，沒有糾正她。灶上的湯，照樣留著。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2511,7 +2556,8 @@
         {
           "to": "ting-06"
         }
-      ]
+      ],
+      "sprites": []
     },
     "ting-06-f1ok": {
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2525,7 +2571,8 @@
           "text": "我把手從背蓋旁移開。對年是既有的日子，不讓步。"
         }
       ],
-      "next": "ting-06"
+      "next": "ting-06",
+      "sprites": []
     },
     "ting-06-break": {
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2538,7 +2585,8 @@
           "text": "然後我把鑰匙放回去，掌心離開。一拍。沒有話。日曆一個字也沒改。"
         }
       ],
-      "next": "ting-06"
+      "next": "ting-06",
+      "sprites": []
     },
     "ting-06": {
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2560,6 +2608,9 @@
         },
         {
           "text": "我答不出第二句。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2598,7 +2649,8 @@
             "mem_gate_word": "c"
           }
         }
-      ]
+      ],
+      "sprites": []
     },
     "ting-07": {
       "title": "來拿的人到了",
@@ -2657,7 +2709,8 @@
         {
           "goto": "ting-07-fb"
         }
-      ]
+      ],
+      "steps": []
     },
     "ting-07-std": {
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2717,7 +2770,8 @@
         {
           "goto": "ting-07-std-tail"
         }
-      ]
+      ],
+      "sprites": []
     },
     "ting-07-std-laugh": {
       "bg": "backgrounds/bell-tower.png",
@@ -2865,7 +2919,8 @@
           "who": "ting"
         }
       ],
-      "next": "ting-08"
+      "next": "ting-08",
+      "sprites": []
     },
     "ting-07-good": {
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2939,7 +2994,8 @@
           "who": "ting"
         }
       ],
-      "next": "ting-08"
+      "next": "ting-08",
+      "sprites": []
     },
     "ting-07-fb": {
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -2991,7 +3047,8 @@
           "text": "之後，我只能回台。"
         }
       ],
-      "next": "ting-08"
+      "next": "ting-08",
+      "sprites": []
     },
     "ting-07-poison": {
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -3042,7 +3099,8 @@
           "text": "我留在門邊，她在鐘上。一夜，無話。"
         }
       ],
-      "next": "ting-08"
+      "next": "ting-08",
+      "sprites": []
     },
     "ting-08": {
       "title": "分岔",
@@ -3215,7 +3273,8 @@
           "goto": "end-ting-good",
           "variant": "fallback"
         }
-      ]
+      ],
+      "steps": []
     },
     "end-ting-true": {
       "title": "收徒禮・留下",
@@ -3227,11 +3286,17 @@
           "text": "發條走完最後一圈。門死在我身後——我面朝鐘樓，沒有回頭看它熄滅。地上，兩個影子一樣長。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
         {
           "text": "台灣，一封給姑姑的信。出發前寫好的，攤在店裡桌上。她讀完，摺好，收進圍裙口袋。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -3309,6 +3374,9 @@
           "text": "門前。她不送行——「再見」是她不說的詞。她只把我的工具袋遞還，袋口多了一枚上了油的布卷。門死，發條末響。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
@@ -3331,6 +3399,9 @@
         {
           "say": "明日同時辰。",
           "who": "ting"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -3360,6 +3431,9 @@
           "text": "門前。她把我的工具袋遞還，袋口多了一枚上了油的布卷。門死，發條末響。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
@@ -3375,6 +3449,9 @@
         },
         {
           "text": "刻城。一個平常的清晨，城中第一座小鐘自鳴。她循聲駐足——沒有開蓋。認不認得出，留在她自己心裡。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -3399,6 +3476,9 @@
       "steps": [
         {
           "text": "門前。她把我的工具袋遞還。門死，發條末響。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -3461,6 +3541,9 @@
           "who": "ting"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/kitchen-taiwan.png",
           "fx": "fade"
         },
@@ -3496,6 +3579,9 @@
         },
         {
           "text": "刻城，一鏡頭。寄放櫃的深處，兩張單據並排——一張寫著五十年前的名字，一張寫著我的。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -3881,6 +3967,9 @@
           "text": "發條走到底，我出窗。門後無聲，懷錶的秒針照走，台灣的日曆又自己厚了一個月。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-backroom-night.png",
           "fx": "fade"
         },
@@ -4240,6 +4329,9 @@
         },
         {
           "text": "門在背後合上，秒針照走。我帶回台灣的，只有又老了一個月的日曆。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -4720,19 +4812,14 @@
           "beat": true
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
         {
           "text": "台灣。日曆的紅字逼近。姑姑張羅著對年的流程，問起店裡往後的打算。"
-        },
-        {
-          "sprite": {
-            "char": "gu",
-            "expr": "normal",
-            "pos": "left"
-          },
-          "fx": "fade"
         },
         {
           "say": "對年怎麼辦，你自己想。我就問這一次。",
@@ -4811,6 +4898,9 @@
       "sprites": [],
       "steps": [
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-backroom-night.png",
           "fx": "fade"
         },
@@ -4860,14 +4950,6 @@
         },
         {
           "text": "前夜。姑姑背著身，問了一句。"
-        },
-        {
-          "sprite": {
-            "char": "gu",
-            "expr": "normal",
-            "pos": "left"
-          },
-          "fx": "fade"
         },
         {
           "say": "店裡這口鐘……你要自己修嗎？",
@@ -4983,14 +5065,6 @@
           "text": "迎面一個佝著背趕路的人，油紙束抱得死緊，差點撞上我，反射先賠了個不是。"
         },
         {
-          "sprite": {
-            "char": "mangzhong",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "fade"
-        },
-        {
           "say": "對不住、對不住——啊，不是……",
           "who": "mangzhong"
         },
@@ -5046,14 +5120,6 @@
           "text": "門廊沒有人。芒種把信束遞來——每一封都沒有封緘、沒有日期，散裝在一個袋子裡。"
         },
         {
-          "sprite": {
-            "char": "mangzhong",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "fade"
-        },
-        {
           "text": "袋口夾著一張條子。"
         },
         {
@@ -5076,14 +5142,6 @@
           "text": "門廊沒有人。沒有信束。芒種遞來一張結案憑單，和一封信——我寄出的那封，她的回信。"
         },
         {
-          "sprite": {
-            "char": "mangzhong",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "fade"
-        },
-        {
           "hide": "mangzhong",
           "fx": "fade"
         }
@@ -5097,14 +5155,6 @@
       "steps": [
         {
           "text": "門廊沒有人。沒有信束。只有一張局長開立的結案憑單，上頭四個字：全數送達。"
-        },
-        {
-          "sprite": {
-            "char": "mangzhong",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "cut"
         },
         {
           "text": "芒種把單子遞來，沒有說話。"
@@ -5988,7 +6038,7 @@
           }
         },
         {
-          "text": "門在背後合上，秒針照走。這一趟三日，台灣走掉一個月。"
+          "text": "門在背後合上，秒針照走。這一趟出入，台灣又走掉一個月。"
         },
         {
           "text": "台灣。W4 歸來。阿嬤問：「你阿公呢？」"
@@ -6700,11 +6750,17 @@
           "text": "——沒有數字。只有一頁攤開的手帳頁角，一瞬，不在她手邊。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
         {
           "text": "台灣。阿嬤已經喚不出我的名，改喚「年輕人」，每晚照樣留一碗湯。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -6728,15 +6784,21 @@
     "yan-06-f1a": {
       "steps": [
         {
-          "set": {
-            "F1": true
-          }
-        },
-        {
           "text": "我把香分好。對年那日，我在。"
         }
       ],
-      "next": "yan-06"
+      "branch": [
+        {
+          "if": {
+            "flag": "f1_vow",
+            "eq": true
+          },
+          "to": "yan-06-f1a-vow"
+        },
+        {
+          "to": "yan-06"
+        }
+      ]
     },
     "yan-06-f1b": {
       "steps": [
@@ -6756,13 +6818,7 @@
     },
     "yan-06": {
       "bg": "backgrounds/watch-shop-day.png",
-      "sprites": [
-        {
-          "char": "gu",
-          "expr": "normal",
-          "pos": "left"
-        }
-      ],
+      "sprites": [],
       "timed": true,
       "timeLimit": 8,
       "timeoutOption": 2,
@@ -6823,7 +6879,8 @@
           "hide": "*"
         }
       ],
-      "next": "yan-07"
+      "next": "yan-07",
+      "sprites": []
     },
     "yan-07": {
       "title": "初次見面",
@@ -7351,7 +7408,8 @@
           "goto": "end-yan-good",
           "variant": "fallback"
         }
-      ]
+      ],
+      "steps": []
     },
     "end-yan-true": {
       "title": "分持記憶的同居",
@@ -7360,6 +7418,9 @@
       "steps": [
         {
           "text": "我站在門廊這一側，沒有出窗。發條的最後三響，慢慢遞下去，我聽著門死。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -7421,6 +7482,9 @@
           "text": "出窗。門死。發條三響遞慢。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-day.png",
           "fx": "fade"
         },
@@ -7429,6 +7493,21 @@
         }
       ],
       "branch": [
+        {
+          "if": {
+            "any": [
+              {
+                "flag": "end_variant",
+                "eq": "downgrade"
+              },
+              {
+                "flag": "end_variant",
+                "eq": "fallback"
+              }
+            ]
+          },
+          "to": "end-yan-good-reduced"
+        },
         {
           "if": {
             "flag": "chain_yan",
@@ -7582,6 +7661,30 @@
         "tier": "shut"
       }
     },
+    "yan-06-f1a-vow": {
+      "steps": [
+        {
+          "set": {
+            "F1": true
+          }
+        }
+      ],
+      "next": "yan-06"
+    },
+    "end-yan-good-reduced": {
+      "bg": "backgrounds/ke-city-market.png",
+      "sprites": [],
+      "steps": [
+        {
+          "text": "某日，刻城街上。她照舊送名、倒著唸。她不認得我，也沒有什麼可認的。名字比人耐放——她繼續上路。"
+        }
+      ],
+      "ending": {
+        "id": "end-yan-good",
+        "route": "yan",
+        "tier": "good"
+      }
+    },
     "true-01": {
       "title": "亥時・其一——重讀",
       "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -7647,14 +7750,6 @@
         },
         {
           "bg": "backgrounds/tower-base-door.png",
-          "fx": "fade"
-        },
-        {
-          "sprite": {
-            "char": "zhongjiang",
-            "expr": "normal",
-            "pos": "center"
-          },
           "fx": "fade"
         },
         {
@@ -7728,7 +7823,10 @@
           "text": "那就只可能在兩個地方——專收「沒送到之物」的死信局，和只記得還沒發生之事的雁回。下一窗起，我從這兩頭查。"
         },
         {
-          "text": "出窗。門後無聲，秒針照走。這一趟三日，台灣又走掉一個月。"
+          "text": "出窗。門後無聲，秒針照走。這一趟出入，台灣又走掉一個月。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/kitchen-taiwan.png",
@@ -7758,7 +7856,8 @@
           "fx": "fade"
         }
       ],
-      "next": "true-02"
+      "next": "true-02",
+      "sprites": []
     },
     "true-02": {
       "title": "亥時・其二——數是我的，門是你的",
@@ -7909,6 +8008,9 @@
           "text": "出窗。門後無聲，秒針照走，台灣的日曆又厚了一個月。"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/kitchen-taiwan.png",
           "fx": "fade"
         },
@@ -7917,6 +8019,9 @@
         },
         {
           "text": "阿嬤住院，出院。姑姑接手了日常。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-backroom-night.png",
@@ -8020,6 +8125,9 @@
           "fx": "fade"
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-backroom-night.png",
           "fx": "fade"
         },
@@ -8028,14 +8136,6 @@
         },
         {
           "text": "我上了一炷香。這一炷是第一次。"
-        },
-        {
-          "sprite": {
-            "char": "gu",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "fade"
         },
         {
           "text": "姑姑背對著我，手裡整理著供桌。"
@@ -8070,7 +8170,8 @@
       ],
       "timed": true,
       "timeLimit": 8,
-      "timeoutOption": 2
+      "timeoutOption": 2,
+      "sprites": []
     },
     "true-03": {
       "title": "亥時・其三——停拍",
@@ -8128,9 +8229,10 @@
           "set": {
             "true_refused": true
           },
-          "to": "end-common-normal"
+          "to": "end-common-normal-refused"
         }
-      ]
+      ],
+      "sprites": []
     },
     "true-03-stop": {
       "title": "停拍",
@@ -8138,14 +8240,6 @@
       "steps": [
         {
           "hide": "ting",
-          "fx": "fade"
-        },
-        {
-          "sprite": {
-            "char": "zhongjiang",
-            "expr": "normal",
-            "pos": "center"
-          },
           "fx": "fade"
         },
         {
@@ -8312,6 +8406,9 @@
           "wait": 1500
         },
         {
+          "hide": "*"
+        },
+        {
           "bg": "backgrounds/watch-shop-backroom-night.png",
           "fx": "fade"
         },
@@ -8337,14 +8434,6 @@
       "bg": "backgrounds/watch-shop-backroom-night.png",
       "steps": [
         {
-          "sprite": {
-            "char": "gu",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "fade"
-        },
-        {
           "say": "你回來了。",
           "who": "gu"
         },
@@ -8357,20 +8446,13 @@
           "fx": "fade"
         }
       ],
-      "next": "true-05-coda"
+      "next": "true-05-coda",
+      "sprites": []
     },
     "true-05-incense-bc": {
       "title": "香",
       "bg": "backgrounds/watch-shop-backroom-night.png",
       "steps": [
-        {
-          "sprite": {
-            "char": "gu",
-            "expr": "normal",
-            "pos": "center"
-          },
-          "fx": "fade"
-        },
         {
           "say": "阿律，香拿去。",
           "who": "gu"
@@ -8380,7 +8462,8 @@
           "fx": "fade"
         }
       ],
-      "next": "true-05-coda"
+      "next": "true-05-coda",
+      "sprites": []
     },
     "true-05-coda": {
       "title": "明天就來",
@@ -8391,6 +8474,9 @@
         },
         {
           "text": "……想不起來了。"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/kitchen-taiwan.png",
@@ -8415,6 +8501,9 @@
         {
           "hide": "amah",
           "fx": "fade"
+        },
+        {
+          "hide": "*"
         },
         {
           "bg": "backgrounds/watch-shop-day.png",
@@ -8445,7 +8534,8 @@
           "sfx": "audio/theme-vocal.mp3"
         }
       ],
-      "next": "end-true"
+      "next": "end-true",
+      "sprites": []
     },
     "end-true": {
       "title": "亥時",
@@ -8459,7 +8549,8 @@
         "id": "end-true",
         "route": "true",
         "tier": "true"
-      }
+      },
+      "sprites": []
     }
   }
 }
